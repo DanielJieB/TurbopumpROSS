@@ -1,5 +1,16 @@
 import ross as rs
 import numpy as np
+import os
+
+def LoadRotor() -> tuple[rs.Rotor, str]:
+    name: str = input("Load model (Default: \'Default\')?:\n")
+    if name == '': name = 'Default'
+    directory = os.getcwd() + '\\Results\\' + name;
+
+    if not os.path.isdir(directory):
+        raise ValueError('In valid directory name');
+
+    return rs.Rotor.load(directory + "\\MODEL.json"), directory;
 
 def PlotRotor(rotor: rs.Rotor):
     fig = rotor.plot_rotor(length_units='in', check_sld=True)

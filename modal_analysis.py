@@ -6,13 +6,8 @@ import os
 
 from ross.units import Q_
 
-# import plotly just to guarantee that plots will appear in the docs
-import plotly
-print(rs.__version__)
-from pathlib import Path
-
-import plotly.graph_objects as go
 import plotly.io as pio
+pio.renderers.default = "browser"# "vscode"
 
 from helpers import PromptBool
 from helpers import PromptInt
@@ -39,19 +34,7 @@ def SaveFigure(fig, name: str, file_extension: str | None = 'html', append_num: 
             'extension': file_extension,
         };
 
-pio.renderers.default = "browser"# "vscode"
-
-def LoadRotor() -> tuple[rs.Rotor, str]:
-    name: str = input("Load model (Default: \'Default\')?:\n")
-    if name == '': name = 'Default'
-    directory = os.getcwd() + '\\Results\\' + name;
-
-    if not os.path.isdir(directory):
-        raise ValueError('In valid directory name');
-
-    return rs.Rotor.load(directory + "\\MODEL.json"), directory;
-
-rotor, directory = LoadRotor();
+rotor, directory = helpers.LoadRotor();
 
 for bearing in rotor.bearing_elements:
     print(bearing.tag + " stiffness: ", bearing.K(0))
@@ -64,6 +47,7 @@ if PromptBool("Run Critical Speeds?"):
     crit = rotor.run_critical_speed(num_modes=10);
     print("Damped: ", np.round(crit.wd(frequency_units='rpm')))
     print("Undamped: ", np.round(crit.wn(frequency_units='rpm')))
+    crit.save(directory + '\\CriticalSpeeds.toml')
 
 if PromptBool("Run modal?"):
     mode_shapes = PromptInt("How many mode shapes? (Default: 5)", accept_none=True) or 5;
