@@ -183,7 +183,7 @@ turbine = rs.DiskElement(
     Ip = 3.68E-4, 
     Id=1.848E-4,
     tag="Turbine",
-    scale_factor=2.2,
+    scale_factor=1.5,
     );
 Mark(turbine, 0.15098510);
 '''
@@ -203,7 +203,7 @@ kero_nut = rs.DiskElement(
     Ip=2.96E-6,
     Id=1.65E-6,
     tag="Kero Bearing Nut",
-    scale_factor=0.5
+    scale_factor=0.3
 )
 Mark(kero_nut, 1.6013385827);
 
@@ -213,20 +213,20 @@ kero_inducer = rs.DiskElement(
     Ip = 6.24e-7,
     Id = ((4.52 + 4.02)/2)*1e-7,
     tag = "Kero Inducer",
-    scale_factor=0.75
+    scale_factor=0.5
 );
 Mark(kero_inducer, 2.68662598425);
 
 kero_impeller = rs.DiskElement(
     n=0,
     m=3.63e-2,
-    Ip=1.15e-5,
-    Id=6.44e-6,
+    Ip=1.154e-5,
+    Id=6.469e-6,
     tag="Kero Impeller",
-    scale_factor=1.25,
+    scale_factor=0.7,
     color="Green"
 )
-Mark(kero_impeller, 3.226722440945);
+Mark(kero_impeller, 3.18677735);
 
 lox_bearing_nut = rs.DiskElement(
     n=0,
@@ -234,20 +234,20 @@ lox_bearing_nut = rs.DiskElement(
     Ip=3.4483E-7,
     Id=(6.9851 + 4.2343)/2*1E-7,
     tag="LOX Bearing Nut",
-    scale_factor=0.5
+    scale_factor=0.2
 )
 Mark(lox_bearing_nut, 5.854803937008);
 
 lox_impeller = rs.DiskElement(
     n=0,
     m=8.4E-2,
-    Ip=1.88e-5,
-    Id=1.13e-5,
+    Ip=1.919e-5,
+    Id=1.157e-5,
     tag="LOX Impeller",
-    scale_factor=1.25,
+    scale_factor=0.6,
     color="Cyan"
 )
-Mark(lox_impeller, 6.256729133858);
+Mark(lox_impeller, 6.30276813);
 
 lox_inducer = rs.DiskElement(
     n=0,
@@ -255,7 +255,7 @@ lox_inducer = rs.DiskElement(
     Ip=1.23E-6,
     Id=(9.2 + 8.3)/2*1E-7,
     tag="LOX Inducer",
-    scale_factor=0.75,
+    scale_factor=0.5,
 )
 Mark(lox_inducer, 6.832196456693);
 
@@ -265,7 +265,7 @@ retaining_nut = rs.DiskElement(
     Ip=7.134E-8,
     Id=6.8793E-8,
     tag="Retaining Nut",
-    scale_factor=0.25,
+    scale_factor=0.2,
 )
 Mark(retaining_nut, 7.358319685039);
 

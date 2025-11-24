@@ -59,5 +59,21 @@ def PromptInt(message: str, accept_none: bool=False) -> int | None:
     print('...\n')
     return value;
 
+def PromptFloat(message: str, accept_none: bool|None=False) -> float|None:
+    value = None
+    APPEND = "\nEnter a float" + (accept_none and " (optional)" or '') + '\n'
+    while value is None:
+        response = input(message + APPEND);
+        #print('\n')
+        try:
+            value = float(response)
+        except ValueError:
+            if accept_none:
+                print('...\n')
+                return None;
+            continue
+    print('...\n')
+    return value
+
 def ToAngularFreq(rpm: float) -> float:
     return rpm/60 * 2 * np.pi;

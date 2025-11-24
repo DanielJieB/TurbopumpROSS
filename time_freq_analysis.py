@@ -20,7 +20,7 @@ if helpers.PromptBool('Run and Plot Undamped Critical Speed Map?'):
         ucs.plot_mode_3d(mode_index, frequency_units='rpm').show();
 
 # ISO 21940 "Balancing Quality Grade G" according to the product of e*omega, where e is unbalance/equivalent eccentricity (mm) and omega is the operating speed (rad/s)
-BALANCING_GRADE = Q_(2.5, 'mm/s');
+BALANCING_GRADE = Q_(helpers.PromptFloat('Enter ISO Balancing Quality Grade G (Default: 2.5):', True) or 2.5, 'mm/s');
 OPERATING_SPEED = Q_(50e3, 'rpm');
 ROTOR_MASS = Q_(rotor.m, 'kg'); #kg
 
@@ -61,7 +61,9 @@ unb_deflection_fig = unb_response.plot_deflected_shape(
     frequency_units='rpm',
     #amplitude_units='nm'
     )
+
 unb_deflection_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceDeflection.html')
 unb_deflection_fig.show()
 
+print(f'Rotor total mass: {ROTOR_MASS.to('kg').m : .3f} kg')
 print("Program exited.\n" + '_'*20);
