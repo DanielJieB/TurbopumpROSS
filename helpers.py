@@ -12,7 +12,7 @@ def LoadRotor() -> tuple[rs.Rotor, str]:
 
     return rs.Rotor.load(directory + "\\MODEL.json"), directory;
 
-def PlotRotor(rotor: rs.Rotor):
+def PlotRotor(rotor: rs.Rotor, show: bool=True):
     fig = rotor.plot_rotor(length_units='in', check_sld=True)
     fig.update_layout(
         yaxis=dict(
@@ -27,7 +27,8 @@ def PlotRotor(rotor: rs.Rotor):
             scaleanchor=None,
         ),
     )
-    fig.show();
+    if show:
+        fig.show();
     return fig
 
 def PromptBool(message: str) -> bool:

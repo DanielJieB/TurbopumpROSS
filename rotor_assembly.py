@@ -394,8 +394,7 @@ rotor_model = rs.Rotor(
     disk_elements=disk_elements,
     bearing_elements=bearing_elements)
 
-if helpers.PromptBool("Show rotor plot?"):
-    helpers.PlotRotor(rotor_model)
+rotor_fig = helpers.PlotRotor(rotor_model, show=helpers.PromptBool("Show rotor plot?"))
 
 name: str = input("Enter model name? (Default: \'Default\')\n")
 
@@ -404,6 +403,9 @@ if name == '':
 directory: str = os.getcwd() + '\\Results\\'+ name;
 if not os.path.isdir(directory):
     os.makedirs(directory);
+
 rotor_model.save(directory + '\\MODEL.json');
+
+rotor_fig.write_html(directory + '\\RotorModel.html');
 
 print("Rotor model created in " + directory);
