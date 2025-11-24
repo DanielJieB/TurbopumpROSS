@@ -1,3 +1,4 @@
+print('Running Diddyware...')
 import ross as rs
 
 import helpers
