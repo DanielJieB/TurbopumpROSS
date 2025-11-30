@@ -91,8 +91,8 @@ def OverlappingSection(L: float, start: float, odl: float, idl: float, odr: floa
 
 # UNC 3/8-16 threads
 
-ShaftSection(L=0.33, odl=(3/8 + 0.3005)/2)
-ShaftSection(L=0.05, odl=3/8)
+ShaftSection(L=0.38, odl=(3/8 + 0.3005)/2)
+#ShaftSection(L=0.05, odl=3/8)
 
 ShaftSection(L=3.0428, odl=0.4);
 
@@ -122,10 +122,24 @@ ShaftSection(L=0.7279 - 0.25, odl=1/4)
 ShaftSection(L=0.25, odl=(1/4 + 0.1905)/2);
 
 # Shaft sleeve
-OverlappingSection(L=0.13, start=0.25, odl=1.404, idl=0.81)
-OverlappingSection(L=0.12, start=0.38, odl=1.404, idl=0.4);
-OverlappingSection(L=0.1521, start=0.5, odl=1.384, odr=0.889, idl=0.4);
-OverlappingSection(L=0.788, start=0.6522, odl=0.669, idl=0.4);
+
+# thick sleeve
+#OverlappingSection(L=0.788 + 0.6522, start=0, odl=0.669, idl=0.4);
+
+# detailed
+#OverlappingSection(L=0.13, start=0.25, odl=1.404, idl=0.81)
+#OverlappingSection(L=0.12, start=0.38, odl=1.404, idl=0.4);
+#OverlappingSection(L=0.1521, start=0.5, odl=1.384, odr=0.889, idl=0.4);
+
+# simple sleeve
+OverlappingSection(L=0.4021, start=0.25, odl=1.404, odr=1.2, idl=0.669);
+
+# detailed
+#OverlappingSection(L=0.788, start=0.6522, odl=0.669, idl=0.4);
+
+# simple sleeve
+OverlappingSection(L=0.788 + 0.12 + 0.1521, start=0.6522 - 0.12 - 0.1521, odl=0.669, idl=0.4);
+
 OverlappingSection(L=0.4134, start=1.4402, odl=0.5975, idl=0.4);
 OverlappingSection(L=0.5335, start=1.8536, odl=0.5447, idl=0.4);
 
@@ -311,10 +325,12 @@ kero_bearing1 = rs.BallBearingElement(
 
 Mark(kero_bearing1, 0.84904964),
 '''
+'''
 kero_bearing2 = rs.BallBearingElement(
     n=0, n_balls=12, d_balls=5.556E-3,
     fs=k_preload, alpha=bearing_alpha, tag="KeroBearing2")
 Mark(kero_bearing2, 1.24275043),
+'''
 '''
 lox_bearing1 = rs.BallBearingElement(
     n=0, n_balls=10, d_balls=5.556E-3,
@@ -328,6 +344,14 @@ lox_bearing2 = rs.BallBearingElement(
 )
 Mark(lox_bearing2, 5.53335118);
 
+'''
+lox_bearing1 = rs.BearingElement(n=0, kxx=35e6, kyy=35e6, cxx=0)
+Mark(lox_bearing1, 5.13965039)
+lox_bearing2 = rs.BearingElement(n=0, kxx=35e6, kyy=35e6, cxx=0)
+Mark(lox_bearing2, 5.53335118)
+kero_bearing1 = rs.BearingElement(n=0, kxx=35e6, kyy=35e6, cxx=0)
+Mark(kero_bearing1, 0.84904964)
+'''
 bearing_elements = [
     kero_bearing1,
     #kero_bearing2,
@@ -341,7 +365,7 @@ shaft_elements = node_shaft.shaft_elements;
 
 add_nodes = [];
 
-def bruh_search(inch: float, tol: float | None = 1E-5) -> bool:
+def bruh_search(inch: float, tol: float | None = 1E-3) -> bool:
     for meter in simple_shaft.nodes_pos:
         if np.isclose(Q_(meter, 'm'), Q_(inch, 'in'), tol):
             return True
@@ -357,7 +381,7 @@ shaft_elements = overlap_insert_shaft.shaft_elements
 
 def FindClose(from_list: any, value: float) -> float | None:
     for v in from_list:
-        if abs(value - v) < 1e-9:
+        if abs(value - v) < 1e-5:
             return v
 
 overlap_index = 0;
@@ -371,7 +395,7 @@ for node_i, node_pos in enumerate(overlap_insert_shaft.nodes_pos):
     if overlap_index == len(overlaps): continue;
     overlap = overlaps[overlap_index];
     
-    if np.abs(Q_(overlap['Start'], 'in') - Q_(node_pos, 'm')) > Q_(1E-4, 'in'):
+    if np.abs(Q_(overlap['Start'], 'in') - Q_(node_pos, 'm')) > Q_(1E-3, 'in'):
         continue
     
     overlap_index += 1;
@@ -396,6 +420,8 @@ rotor_model = rs.Rotor(
     bearing_elements=bearing_elements)
 
 rotor_fig = helpers.PlotRotor(rotor_model, show=helpers.PromptBool("Show rotor plot?"))
+
+print(f'Total rotor mass: {rotor_model.m : .3f} kg');
 
 name: str = input("Enter model name? (Default: \'Default\')\n")
 

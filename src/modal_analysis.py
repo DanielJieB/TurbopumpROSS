@@ -43,6 +43,14 @@ if not os.path.isdir(DIRECTORY_MODAL):
 for bearing in rotor.bearing_elements:
     print(bearing.tag + " stiffness: ", bearing.K(0))
 
+if PromptBool('Run and Plot Undamped Critical Speed Map?'):
+    ucs = rotor.run_ucs(synchronous=True);
+    ucs_plot = ucs.plot(frequency_units='RPM')
+    ucs_plot.show()
+    SaveFigure(ucs_plot, 'UndampedCriticalSpeedMap');
+    #for mode_index in range(len(ucs.critical_points_modal)):
+        #ucs.plot_mode_3d(mode_index, frequency_units='rpm').show();
+
 if PromptBool("Run Critical Speeds?"):
     crit = rotor.run_critical_speed(num_modes=10);
     print("Damped: ", np.round(crit.wd(frequency_units='rpm')))

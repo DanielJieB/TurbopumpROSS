@@ -14,12 +14,6 @@ DIRECTORY_TIMEFREQ = DIRECTORY + '\\TimeFrequency';
 if not os.path.isdir(DIRECTORY_TIMEFREQ):
     os.makedirs(DIRECTORY_TIMEFREQ);
 
-if helpers.PromptBool('Run and Plot Undamped Critical Speed Map?'):
-    ucs = rotor.run_ucs(synchronous=True);
-    ucs.plot(frequency_units='RPM').show()
-    for mode_index in range(len(ucs.critical_points_modal)):
-        ucs.plot_mode_3d(mode_index, frequency_units='rpm').show();
-
 # ISO 21940 "Balancing Quality Grade G" according to the product of e*omega, where e is unbalance/equivalent eccentricity (mm) and omega is the operating speed (rad/s)
 BALANCING_GRADE = Q_(helpers.PromptFloat('Enter ISO Balancing Quality Grade G (Default: 2.5):', True) or 2.5, 'mm/s');
 OPERATING_SPEED = Q_(50e3, 'rpm');
