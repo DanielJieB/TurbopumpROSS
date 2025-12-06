@@ -60,25 +60,6 @@ overlaps = [];
 def OverlappingSection(L: float, start: float, odl: float, idl: float, odr: float|None=None, idr: float|None=None) -> None:
     odr: float = not odr is None and odr or odl
     idr: float = not idr is None and idr or idl
-
-    slender_ratio: float = L / (odr + odl) * 2;
-    MAX_RATIO: float = 0.75;
-    if False and slender_ratio > MAX_RATIO:
-        partitions: int = int(slender_ratio / MAX_RATIO) + 1;
-        print("PARTITIONS: ",partitions)
-        L_i: float = L / partitions;
-        slope_out: float = (odr - odl) / L;
-        slope_in: float = (idr - idl) / L;
-        for i in range(partitions):
-            OverlappingSection(
-                L=L_i,
-                start=start + L_i*i,
-                odl=odl + slope_out*i* L_i,
-                odr=odl + slope_out*(i + 1)*L_i,
-                idl=idl + slope_in*i*L_i,
-                idr=idl + slope_in*(i + 1)*L_i
-                )
-        return
     
     overlaps.append({
         'Start': start,
@@ -89,9 +70,9 @@ def OverlappingSection(L: float, start: float, odl: float, idl: float, odr: floa
         'idr': idr
     })
 
-# UNC 3/8-16 threads
+# UNF 3/8-24 threads
 
-ShaftSection(L=0.38, odl=(3/8 + 0.3005)/2)
+ShaftSection(L=0.38, odl=(3/8 + 0.330)/2)
 #ShaftSection(L=0.05, odl=3/8)
 
 ShaftSection(L=3.0428, odl=0.4);
@@ -116,10 +97,10 @@ PartitionedSection(L=1.5101 - IPS_DEDUCT, odl=0.63 - GAP_DEPTH, odr=0.74 - GAP_D
 ShaftSection(L=1.098,odl=0.47244);
 ShaftSection(L=0.6721,odl=0.375);
 
-# 1/4-20 UNC length 0.25
+# 1/4-28 UNF length 0.25
 
-ShaftSection(L=0.7279 - 0.25, odl=1/4)
-ShaftSection(L=0.25, odl=(1/4 + 0.1905)/2);
+ShaftSection(L=0.67033849, odl=1/4)
+#ShaftSection(L=0.67033849, odl=(1/4 + 0.1905)/2);
 
 # Shaft sleeve
 
@@ -138,10 +119,10 @@ OverlappingSection(L=0.4021, start=0.25, odl=1.404, odr=1.2, idl=0.669);
 #OverlappingSection(L=0.788, start=0.6522, odl=0.669, idl=0.4);
 
 # simple sleeve
-OverlappingSection(L=0.788 + 0.12 + 0.1521, start=0.6522 - 0.12 - 0.1521, odl=0.669, idl=0.4);
+OverlappingSection(L=1.12245567, start=0.37994428, odl=0.669, idl=0.4);
 
-OverlappingSection(L=0.4134, start=1.4402, odl=0.5975, idl=0.4);
-OverlappingSection(L=0.5335, start=1.8536, odl=0.5447, idl=0.4);
+OverlappingSection(L=0.88454433, start=1.50239995, odl=0.54468000, idl=0.4);
+#OverlappingSection(L=0.5335, start=1.8536, odl=0.5447, idl=0.4);
 
 #%% SIMPLE SHAFT
 lengths = [];
@@ -201,17 +182,7 @@ turbine = rs.DiskElement(
     scale_factor=1.5,
     );
 Mark(turbine, 0.15098510);
-'''
-rotor_sleeve = rs.DiskElement(
-    n=0,
-    m=0.0903,
-    Ip=1.1E-5,
-    Id=2.4E-5,
-    tag="Rotor Sleeve",
-    scale_factor=0.5,
-);
-Mark(rotor_sleeve, 0.834645669);
-'''
+
 kero_nut = rs.DiskElement(
     n=0,
     m=0.024601,
@@ -220,7 +191,7 @@ kero_nut = rs.DiskElement(
     tag="Kero Bearing Nut",
     scale_factor=0.3
 )
-Mark(kero_nut, 1.6013385827);
+Mark(kero_nut, 1.21340871);
 
 kero_inducer = rs.DiskElement(
     n=0,
@@ -287,7 +258,6 @@ Mark(retaining_nut, 7.358319685039);
 disk_elements = [
     sleeve_nut,
     turbine,
-    #rotor_sleeve,
     kero_nut,
     kero_inducer,
     kero_impeller,
@@ -329,7 +299,7 @@ Mark(kero_bearing1, 0.84904964),
 kero_bearing2 = rs.BallBearingElement(
     n=0, n_balls=12, d_balls=5.556E-3,
     fs=k_preload, alpha=bearing_alpha, tag="KeroBearing2")
-Mark(kero_bearing2, 1.24275043),
+#Mark(kero_bearing2, 1.24275043),
 '''
 '''
 lox_bearing1 = rs.BallBearingElement(

@@ -89,10 +89,19 @@ if PromptBool("Run and plot Campbell?"):
     )
 
     campbell_fig = campbell.plot()
-    SaveFigure(campbell_fig, "CampbellDiagram")
-    campbell_fig.update_yaxes(range=[0, 90e3]);
-    campbell_fig.update_layout({'title': {'text': 'Campbell Diagram', 'x': 0.5, 'xanchor': 'center'}})
+    trace_list = [];
+    for _, t in enumerate(campbell_fig.data):
+        if t.name == 'Torsional':
+            continue
+        trace_list.append(t)
+    campbell_fig.data = tuple(trace_list)
+
+    campbell_fig.update_layout(
+        {'title': {'text': 'Campbell Diagram', 'x': 0.5, 'xanchor': 'center'}}
+        )
+
     campbell_fig.show()
+    SaveFigure(campbell_fig, "CampbellDiagram")
 
 #%% Save figs
 if PromptBool("Save result figures? (Directory: " + DIRECTORY_MODAL + ")"):
