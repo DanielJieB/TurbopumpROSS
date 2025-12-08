@@ -1,4 +1,3 @@
-print('Running Diddyware...')
 import ross as rs
 import numpy as np
 import math
@@ -72,11 +71,9 @@ def OverlappingSection(L: float, start: float, odl: float, idl: float, odr: floa
 
 # UNF 3/8-24 threads
 
-ShaftSection(L=0.38, odl=(3/8 + 0.330)/2)
-#ShaftSection(L=0.05, odl=3/8)
-
-ShaftSection(L=3.0428, odl=0.4);
-
+#ShaftSection(L=0.38, odl=(3/8 + 0.330)/2)
+#ShaftSection(L=3.0428, odl=0.4);
+ShaftSection(L=3.0428 + 0.38, odl=0.4);
 # LABY SECTION
 
 NOTCH_WIDTH = 0.01; #in
@@ -113,15 +110,16 @@ ShaftSection(L=0.67033849, odl=1/4)
 #OverlappingSection(L=0.1521, start=0.5, odl=1.384, odr=0.889, idl=0.4);
 
 # simple sleeve
-OverlappingSection(L=0.4021, start=0.25, odl=1.404, odr=1.2, idl=0.669);
+OverlappingSection(L=0.25, start=0.25, odl=1.404, idl=0.4);
+OverlappingSection(L=0.15274843, start=0.5, odl=1.404, odr=0.669, idl=0.4)
 
 # detailed
 #OverlappingSection(L=0.788, start=0.6522, odl=0.669, idl=0.4);
 
 # simple sleeve
-OverlappingSection(L=1.12245567, start=0.37994428, odl=0.669, idl=0.4);
+OverlappingSection(L=0.80648819, start=0.65269270, odl=0.669, idl=0.4);
 
-OverlappingSection(L=0.88454433, start=1.50239995, odl=0.54468000, idl=0.4);
+OverlappingSection(L=0.92776339, start=1.45918089, odl=0.54468000, idl=0.4);
 #OverlappingSection(L=0.5335, start=1.8536, odl=0.5447, idl=0.4);
 
 #%% SIMPLE SHAFT

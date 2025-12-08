@@ -1,4 +1,3 @@
-print('Running Diddyware...')
 import ross as rs
 import numpy as np
 import helpers
@@ -45,7 +44,7 @@ ubr_fig = unb_response.plot(probe=[
     rs.Probe(probe_node, angle=0)
     ],
     frequency_units='rpm',
-    amplitude_units='mm',
+    amplitude_units='thou',
     phase_units='deg'
     )
 ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponse.html')
@@ -54,7 +53,7 @@ ubr_fig.show()
 unb_deflection_fig = unb_response.plot_deflected_shape(
     speed=OPERATING_SPEED.to('rad/s').m,
     frequency_units='rpm',
-    #amplitude_units='nm'
+    amplitude_units='thou'
     )
 
 unb_deflection_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceDeflection.html')
