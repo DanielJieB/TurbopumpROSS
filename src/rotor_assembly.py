@@ -87,22 +87,11 @@ PartitionedSection(L=1.5101 - IPS_DEDUCT, odl=0.63 - GAP_DEPTH, odr=0.74 - GAP_D
 # END OF LABY
 
 ShaftSection(L=1.098,odl=0.47244);
-ShaftSection(L=0.6721,odl=0.375);
+ShaftSection(L=0.6721,odl=0.4);
 
 # 1/4-28 UNF length 0.25
 
 ShaftSection(L=0.67033849, odl=1/4)
-#ShaftSection(L=0.67033849, odl=(1/4 + 0.1905)/2);
-
-# Shaft sleeve
-
-# thick sleeve
-#OverlappingSection(L=0.788 + 0.6522, start=0, odl=0.669, idl=0.4);
-
-# detailed
-#OverlappingSection(L=0.13, start=0.25, odl=1.404, idl=0.81)
-#OverlappingSection(L=0.12, start=0.38, odl=1.404, idl=0.4);
-#OverlappingSection(L=0.1521, start=0.5, odl=1.384, odr=0.889, idl=0.4);
 
 # simple sleeve
 OverlappingSection(L=0.25, start=0.25, odl=1.404, idl=0.4);
