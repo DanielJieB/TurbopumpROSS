@@ -1,5 +1,6 @@
 print('Running Diddyware...')
 
+from scipy.stats import truncnorm
 import ross as rs
 import numpy as np
 import os
@@ -15,7 +16,7 @@ def LoadRotor() -> tuple[rs.Rotor, str]:
     return rs.Rotor.load(directory + "\\MODEL.json"), directory;
 
 def PlotRotor(rotor: rs.Rotor, show: bool=True):
-    fig = rotor.plot_rotor(length_units='in', check_sld=True)
+    fig = rotor.plot_rotor(length_units='in', check_sld=False)
     fig.update_layout(
         yaxis=dict(
             showgrid=True,
@@ -79,3 +80,9 @@ def PromptFloat(message: str, accept_none: bool|None=False) -> float|None:
 
 def ToAngularFreq(rpm: float) -> float:
     return rpm/60 * 2 * np.pi;
+
+def clustered_values(size: int, min: float, max: float, center: float, std: float|None = None) -> np.ndarray:
+    if std is None:
+        std = 0.05 * (max - min);
+    x = np.random.normal(loc=center, scale=std, size=size)
+    return x[(x > min) & (x < max)]

@@ -1,3 +1,4 @@
+import helpers
 import ross as rs
 import numpy as np
 import math
@@ -6,7 +7,6 @@ import os
 from ross.units import Q_
 # import plotly just to guarantee that plots will appear in the docs
 import plotly
-import helpers
 
 from pathlib import Path
 
@@ -20,11 +20,6 @@ PLOT_ROTOR = True;
 def safe_int(x: float, tol: float = 1e-9) -> int:
     rounded = round(x);
     return int(rounded) if math.isclose(x, rounded, abs_tol=tol) else int(rounded);
-
-# turbine operating temperature is ~750 Fahrenheit, could be higher, using 800 deg F
-# https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-718.pdf
-
-inco_718 = rs.Material(name="Inconel-718", rho=8193, E = 1.77885e11, Poisson=0.271)
 
 # https://asm.matweb.com/search/specificmaterial.asp?bassnum=mq304a
 ss_304 = rs.Material(name="Stainless-304", rho = 8000, E = 1.93e11, Poisson=0.29);
@@ -197,7 +192,8 @@ kero_inducer = rs.DiskElement(
     Ip = 6.24e-7,
     Id = ((4.52 + 4.02)/2)*1e-7,
     tag = "Kero Inducer",
-    scale_factor=0.5
+    scale_factor=0.5,
+    color = '#a324bf'
 );
 Mark(kero_inducer, 2.68662598425);
 
@@ -212,15 +208,15 @@ kero_impeller = rs.DiskElement(
 )
 Mark(kero_impeller, 3.18677735);
 
-lox_bearing_nut = rs.DiskElement(
+spacer_lox = rs.DiskElement(
     n=0,
-    m=1.0346E-2,
-    Ip=3.4483E-7,
-    Id=(6.9851 + 4.2343)/2*1E-7,
-    tag="LOX Bearing Nut",
+    m=Q_(0.01405150, 'lb'),
+    Ip=Q_(0.00113413, 'lb * in^2'),
+    Id=Q_(0.00068003, "lb * in^2"),
+    tag="Spacer LOX",
     scale_factor=0.2
 )
-Mark(lox_bearing_nut, 5.854803937008);
+Mark(spacer_lox, 5.88550079);
 
 lox_impeller = rs.DiskElement(
     n=0,
@@ -229,7 +225,7 @@ lox_impeller = rs.DiskElement(
     Id=1.157e-5,
     tag="LOX Impeller",
     scale_factor=0.6,
-    color="Cyan"
+    color="#2430bf"
 )
 Mark(lox_impeller, 6.30276813);
 
@@ -240,6 +236,7 @@ lox_inducer = rs.DiskElement(
     Id=(9.2 + 8.3)/2*1E-7,
     tag="LOX Inducer",
     scale_factor=0.5,
+    color='#94bf24'
 )
 Mark(lox_inducer, 6.832196456693);
 
@@ -259,7 +256,7 @@ disk_elements = [
     kero_nut,
     kero_inducer,
     kero_impeller,
-    lox_bearing_nut,
+    spacer_lox,
     lox_impeller,
     lox_inducer,
     retaining_nut
@@ -286,20 +283,17 @@ l_preload = pressfit_LOX_preload+  GetEquivalentRadialLoad(
 k_preload = pressfit_RP1_preload + GetEquivalentRadialLoad(
     alpha_rad=bearing_alpha, F_axial=axial_RP1_preload
     ); #N   
+print(l_preload)
+print(k_preload)
+l_preload = 62.256; #N
+k_preload = l_preload;
 
 kero_bearing1 = rs.BallBearingElement(
     n=0, n_balls=12, d_balls=5.556E-3,
     fs=k_preload, alpha=bearing_alpha, tag="KeroBearing1")
 
 Mark(kero_bearing1, 0.84904964),
-'''
-'''
-kero_bearing2 = rs.BallBearingElement(
-    n=0, n_balls=12, d_balls=5.556E-3,
-    fs=k_preload, alpha=bearing_alpha, tag="KeroBearing2")
-#Mark(kero_bearing2, 1.24275043),
-'''
-'''
+
 lox_bearing1 = rs.BallBearingElement(
     n=0, n_balls=10, d_balls=5.556E-3,
     fs=l_preload, alpha=bearing_alpha, tag="LOXBearing1"
@@ -311,6 +305,7 @@ lox_bearing2 = rs.BallBearingElement(
     fs=l_preload, alpha=bearing_alpha, tag="LOXBearing2"
 )
 Mark(lox_bearing2, 5.53335118);
+
 
 '''
 lox_bearing1 = rs.BearingElement(n=0, kxx=35e6, kyy=35e6, cxx=0)

@@ -341,7 +341,7 @@ alpha = 0.0
 beta = 0.0
 
 ["ShaftElement_Shaft Element 16"]
-L = 0.008164900028003186
+L = 0.008944600094
 idl = 0.0
 odl = 0.011999976
 idr = 0.0
@@ -358,7 +358,7 @@ alpha = 0.0
 beta = 0.0
 
 ["ShaftElement_Shaft Element 17"]
-L = 0.004472839999996786
+L = 0.0036931399339999726
 idl = 0.0
 odl = 0.011999976
 idr = 0.0
@@ -493,7 +493,7 @@ Id = 4.2699999999999995e-7
 Ip = 6.24e-7
 tag = "Kero Inducer"
 scale_factor = 0.5
-color = "Firebrick"
+color = "#a324bf"
 
 ["DiskElement_Kero Impeller"]
 n = 10
@@ -504,12 +504,12 @@ tag = "Kero Impeller"
 scale_factor = 0.7
 color = "Green"
 
-["DiskElement_LOX Bearing Nut"]
+["DiskElement_Spacer LOX"]
 n = 17
-m = 0.010346
-Id = 5.6097e-7
-Ip = 3.4483e-7
-tag = "LOX Bearing Nut"
+m = 0.006373653187055001
+Id = 1.9900374352145886e-7
+Ip = 3.3189141014365856e-7
+tag = "Spacer LOX"
 scale_factor = 0.2
 color = "Firebrick"
 
@@ -520,7 +520,7 @@ Id = 1.157e-5
 Ip = 1.919e-5
 tag = "LOX Impeller"
 scale_factor = 0.6
-color = "Cyan"
+color = "#2430bf"
 
 ["DiskElement_LOX Inducer"]
 n = 21
@@ -529,7 +529,7 @@ Id = 8.75e-7
 Ip = 1.23e-6
 tag = "LOX Inducer"
 scale_factor = 0.5
-color = "Firebrick"
+color = "#94bf24"
 
 ["DiskElement_Retaining Nut"]
 n = 22

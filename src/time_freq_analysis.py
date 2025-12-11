@@ -1,6 +1,6 @@
+import helpers
 import ross as rs
 import numpy as np
-import helpers
 import os
 
 from ross.units import Q_
@@ -18,14 +18,37 @@ BALANCING_GRADE = Q_(helpers.PromptFloat('Enter ISO Balancing Quality Grade G (D
 OPERATING_SPEED = Q_(50e3, 'rpm');
 ROTOR_MASS = Q_(rotor.m, 'kg'); #kg
 
+
+offset_components = [
+    'Kero Impeller',
+    'Kero Inducer',
+    'LOX Impeller',
+    'LOX Inducer'
+]
+
+imb_nodes = [];
+imb_amp = [];
+for i in range(len(rotor.disk_elements)):
+    disk_elm = rotor.disk_elements[i];
+    if disk_elm.tag in offset_components:
+        imb_nodes.append(disk_elm.n);
+        imb_amp.append(disk_elm.m * Q_(0.5, 'thou').to('m').m);
+
+OPERATING_SPEED = Q_(50e3, 'rpm');
+frequency_interest: list = np.linspace(0, (OPERATING_SPEED * 2).to('rad/s').m, 200).tolist();
+frequency_interest.append(OPERATING_SPEED.to('rad/s').m);
+frequency_interest.sort();
+
+print(imb_nodes)
+unb_response = rotor.run_unbalance_response(
+    imb_nodes, imb_amp, [0] * len(imb_nodes),
+    frequency=frequency_interest)
+'''
+
 total_permissible_unbalance = (ROTOR_MASS / OPERATING_SPEED * BALANCING_GRADE).to('kg*m');
 print('ISO permissible unbalance: ', total_permissible_unbalance);
 
 node_unb: int = helpers.PromptInt('Apply imbalance at node?');
-
-frequency_interest: list = np.linspace(0, (OPERATING_SPEED * 2).to('rad/s').m, 200).tolist();
-frequency_interest.append(OPERATING_SPEED.to('rad/s').m);
-frequency_interest.sort();
 
 unb_response = rotor.run_unbalance_response(
     node=node_unb,
@@ -34,7 +57,7 @@ unb_response = rotor.run_unbalance_response(
     frequency=frequency_interest, #rad/s
     cluster_points=True,
 )
-
+'''
 DEFAULT_PROBE_NODE: int = len(rotor.nodes_pos) - 1;
 probe_node: int = helpers.PromptInt(
     'Probe deflection at node? (Default: last node ' + str(DEFAULT_PROBE_NODE) + ')',
@@ -47,13 +70,15 @@ ubr_fig = unb_response.plot(probe=[
     amplitude_units='thou',
     phase_units='deg'
     )
-ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponse.html')
+ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponseBode.html')
 ubr_fig.show()
 
 unb_deflection_fig = unb_response.plot_deflected_shape(
     speed=OPERATING_SPEED.to('rad/s').m,
     frequency_units='rpm',
-    amplitude_units='thou'
+    #amplitude_units='thou'
+    #shape2d_kwargs=dict(amplitude_units='thou'),
+    #shape3d_kwargs=dict(amplitude_units='m')
     )
 
 unb_deflection_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceDeflection.html')
