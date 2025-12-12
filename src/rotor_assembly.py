@@ -292,10 +292,11 @@ lox_bearing2 = rs.BallBearingElement(
 )
 
 def IsotropicBearing(bearing: rs.BallBearingElement) -> rs.BearingElement:
-    kxx = bearing.K(0)[1, 1]
-    kyy = bearing.K(0)[2, 2]
-    cxx = bearing.C(0)[1, 1]
-    cyy = bearing.C(0)[2, 2]
+    kxx = bearing.K(0)[0, 0]
+    kyy = bearing.K(0)[1, 1]
+    cxx = bearing.C(0)[0, 0]
+    cyy = bearing.C(0)[1, 1]
+
     k = (kxx + kyy) / 2;
     c = (cxx + cyy) / 2;
     return rs.BearingElement(n=0, kxx=k, cxx=c);
