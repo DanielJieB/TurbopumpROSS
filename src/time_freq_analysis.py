@@ -74,7 +74,7 @@ ubr_fig = unb_response.plot(probe=[
     amplitude_units='thou',
     phase_units='deg'
     )
-ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponseBode.html')
+ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponseBodeNode' + str(DEFAULT_PROBE_NODE) + '.html')
 ubr_fig.show()
 
 unb_deflection_fig = unb_response.plot_deflected_shape(
