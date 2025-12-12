@@ -28,11 +28,15 @@ offset_components = [
 
 imb_nodes = [];
 imb_amp = [];
+PERMISSIBLE_IMB = (ROTOR_MASS / OPERATING_SPEED * BALANCING_GRADE).to('kg*m')
+
 for i in range(len(rotor.disk_elements)):
     disk_elm = rotor.disk_elements[i];
     if disk_elm.tag in offset_components:
         imb_nodes.append(disk_elm.n);
-        imb_amp.append(disk_elm.m * Q_(0.5, 'thou').to('m').m);
+        amp = disk_elm.m * Q_(0.5, 'thou').to('m').m;
+        print(disk_elm.tag, amp/PERMISSIBLE_IMB)
+        imb_amp.append(amp);
 
 OPERATING_SPEED = Q_(50e3, 'rpm');
 frequency_interest: list = np.linspace(0, (OPERATING_SPEED * 2).to('rad/s').m, 200).tolist();

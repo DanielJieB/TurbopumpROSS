@@ -274,27 +274,42 @@ k_preload = pressfit_RP1_preload + GetEquivalentRadialLoad(
     ); #N   
 print(l_preload)
 print(k_preload)
-l_preload = 62.256; #N
-k_preload = l_preload;
+l_preload = 164.5; #N
+k_preload = 80; #N
 
 kero_bearing1 = rs.BallBearingElement(
     n=0, n_balls=12, d_balls=5.556E-3,
     fs=k_preload, alpha=bearing_alpha, tag="KeroBearing1")
 
-Mark(kero_bearing1, 0.84904964),
-
 lox_bearing1 = rs.BallBearingElement(
     n=0, n_balls=10, d_balls=5.556E-3,
     fs=l_preload, alpha=bearing_alpha, tag="LOXBearing1"
 )
-Mark(lox_bearing1, 5.13965039);
 
 lox_bearing2 = rs.BallBearingElement(
     n=0, n_balls=10, d_balls=5.556E-3,
     fs=l_preload, alpha=bearing_alpha, tag="LOXBearing2"
 )
-Mark(lox_bearing2, 5.53335118);
 
+def IsotropicBearing(bearing: rs.BallBearingElement) -> rs.BearingElement:
+    kxx = bearing.K(0)[1, 1]
+    kyy = bearing.K(0)[2, 2]
+    cxx = bearing.C(0)[1, 1]
+    cyy = bearing.C(0)[2, 2]
+    k = (kxx + kyy) / 2;
+    c = (cxx + cyy) / 2;
+    return rs.BearingElement(n=0, kxx=k, cxx=c);
+
+if helpers.PromptBool('Isotropic Bearings'):
+    kero_bearing1 = IsotropicBearing(kero_bearing1)
+    lox_bearing1 = IsotropicBearing(lox_bearing1)
+    lox_bearing2 = IsotropicBearing(lox_bearing2)
+
+Mark(kero_bearing1, 0.84904964),
+
+Mark(lox_bearing1, 5.13965039);
+
+Mark(lox_bearing2, 5.53335118);
 
 '''
 lox_bearing1 = rs.BearingElement(n=0, kxx=35e6, kyy=35e6, cxx=0)
