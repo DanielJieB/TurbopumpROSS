@@ -23,12 +23,16 @@ BALANCING_GRADE = Q_(helpers.PromptFloat('Enter ISO Balancing Quality Grade G (D
 OPERATING_SPEED = Q_(50e3, 'rpm');
 ROTOR_MASS = Q_(rotor.m, 'kg'); #kg
 
+def GetUnbalanceAmplitude(mass, grade, speed=OPERATING_SPEED):
+    return mass / OPERATING_SPEED * grade;
+
+
 offset_components = [
     'Kero Impeller',
     'Kero Inducer',
     'LOX Impeller',
     'LOX Inducer',
-    #'Turbine'
+    'Turbine'
 ]
 
 imb_nodes = [];
@@ -41,16 +45,19 @@ U_y_sum = Q_(0, 'kg*m')
 
 SAME_PHASE: bool = helpers.PromptBool('Same orientation imbalance?')
 
+turbine: rs.DiskElement
+
 for i in range(len(rotor.disk_elements)):
     disk_elm = rotor.disk_elements[i];
 
     element_name: str = disk_elm.tag;
+    if element_name == 'Turbine': turbine = disk_elm;
 
     if element_name in offset_components:
         imb_nodes.append(disk_elm.n);
 
         amplitude = Q_(disk_elm.m, 'kg') * (Q_(0.5, 'thou').to('m'));
-
+        amplitude = GetUnbalanceAmplitude(Q_(disk_elm.m, 'kg'), BALANCING_GRADE).to('kg*m');
         phase = 0 if SAME_PHASE else random.uniform(0, 2*np.pi);
 
         U_x_sum += amplitude * np.cos(phase)
@@ -61,22 +68,32 @@ for i in range(len(rotor.disk_elements)):
 
         print(f'{element_name} imbalance: {amplitude.to('g*mm').m: .3f} g*mm')
 
+
 U = np.sqrt(U_x_sum**2 + U_y_sum**2)
 achieved_grade = U * OPERATING_SPEED / ROTOR_MASS
 print(f'Achieved balancing grade: ISO G{achieved_grade.to('mm/s'): .2f}')
 
-
+#imb_nodes.append(turbine.n)
+#imb_amp.append(GetUnbalanceAmplitude(Q_(turbine.m, 'kg'), BALANCING_GRADE).to('kg*m').m)
+#imb_phase.append(Q_(random.uniform(0, 2*np.pi), 'rad'))
 #imb_phase = [0] * len(imb_nodes)
 
-OPERATING_SPEED = Q_(50e3, 'rpm');
-frequency_interest: list = np.linspace(0, Q_(45e3, 'rpm').to('rad/s').m, 15).tolist() + np.linspace(Q_(45e3, 'rpm').to('rad/s').m, Q_(80e3, 'rpm').to('rad/s').m, 130).tolist() + np.linspace(Q_(80e3, 'rpm').to('rad/s').m, Q_(1e5, 'rpm').to('rad/s').m, 10).tolist();
+frequency_interest: list = np.linspace(0, Q_(45e3, 'rpm').to('rad/s').m, 7).tolist() + np.linspace(Q_(60e3, 'rpm').to('rad/s').m, Q_(90e3, 'rpm').to('rad/s').m, 150).tolist() + np.linspace(Q_(80e3, 'rpm').to('rad/s').m, Q_(1e5, 'rpm').to('rad/s').m, 10).tolist();
 frequency_interest.append(OPERATING_SPEED.to('rad/s').m);
 frequency_interest.sort();
 
-print(imb_nodes)
 unb_response = rotor.run_unbalance_response(
     imb_nodes, imb_amp, imb_phase,
     frequency=frequency_interest)
+
+unb_deflection_fig = unb_response.plot_deflected_shape(
+    speed=OPERATING_SPEED.to('rad/s').m,
+    frequency_units='rpm',
+    amplitude_units='thou'
+    )
+
+SaveFig(unb_deflection_fig, 'UnbalanceDeflection.html')
+unb_deflection_fig.show()
 
 LAST_NODE: int = len(rotor.nodes_pos) - 1;
 
@@ -93,26 +110,24 @@ while probe_node != -1:
 
 if probe_node is None: rs.Probe(LAST_NODE, 0);
 
-ubr_fig = unb_response.plot(probe=probes,
-    frequency_units='rpm',
-    amplitude_units='thou',
-    phase_units='deg'
+for i in range(len(probes)):
+    probe: rs.Probe = probes[i]
+    ubr_fig = unb_response.plot(probe=[probe],
+        frequency_units='rpm',
+        amplitude_units='thou',
+        phase_units='deg'
     )
-SaveFig(ubr_fig, 'UnbalanceResponseBodeNode.html');
-#ubr_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceResponseBodeNode' + str(DEFAULT_PROBE_NODE) + '.html')
-ubr_fig.show()
+    SaveFig(ubr_fig, 'UnbalanceResponseBodeNode' + str(probe.node) + '.html');
+    ubr_fig.show()
 
-unb_deflection_fig = unb_response.plot_deflected_shape(
-    speed=OPERATING_SPEED.to('rad/s').m,
-    frequency_units='rpm',
-    amplitude_units='thou'
-    #shape2d_kwargs=dict(amplitude_units='thou'),
-    #shape3d_kwargs=dict(amplitude_units='m')
-    )
-
-SaveFig(unb_deflection_fig, 'UnbalanceDeflection.html')
-#unb_deflection_fig.write_html(DIRECTORY_TIMEFREQ + '\\UnbalanceDeflection.html')
-unb_deflection_fig.show()
+    if i == len(probes) - 1 and i > 0:
+        ubr_fig = unb_response.plot(probe=probes,
+            frequency_units='rpm',
+            amplitude_units='thou',
+            phase_units='deg'
+        )
+        SaveFig(ubr_fig, 'UnbalanceResponseBodeCombined.html');
+        ubr_fig.show()
 
 deflected_shape = unb_response.plot_deflected_shape_3d(
     speed=OPERATING_SPEED.to('rad/s').m,

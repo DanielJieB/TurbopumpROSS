@@ -39,10 +39,10 @@ if not os.path.isdir(DIRECTORY_MODAL):
     os.makedirs(DIRECTORY_MODAL);
 
 for bearing in rotor.bearing_elements:
-    print(bearing.tag + " stiffness: ", bearing.K(0))
+    print(bearing.tag + " stiffness: ", bearing.K(0), "\ndamping: ", bearing.C(0))
 
 if PromptBool('Run and Plot Undamped Critical Speed Map?'):
-    ucs = rotor.run_ucs(synchronous=True);
+    ucs = rotor.run_ucs(synchronous=PromptBool('Synchronous?'));
     ucs_plot = ucs.plot(frequency_units='RPM')
     ucs_plot.show()
     SaveFigure(ucs_plot, 'UndampedCriticalSpeedMap');
